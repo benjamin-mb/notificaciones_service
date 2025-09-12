@@ -26,3 +26,7 @@ spring:
     service:
       url: http://localhost:8082  # URL del micro de catálogo
 
+
+  usuario:
+    service:
+      url: http://localhost:8082
