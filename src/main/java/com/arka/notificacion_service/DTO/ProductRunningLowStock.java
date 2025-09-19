@@ -1,4 +1,4 @@
-package com.arka.notificacion_service.notificacion_service.DTO;
+package com.arka.notificacion_service.DTO;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

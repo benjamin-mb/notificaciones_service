@@ -1,4 +1,4 @@
-package com.arka.notificacion_service.notificacion_service.model;
+package com.arka.notificacion_service.model;
 
 import jakarta.persistence.*;
 import lombok.Data;

@@ -21,12 +21,19 @@ spring:
     port: 5672
     username: arka
     password: arka123
+    virtual-host: /
 
-  catalogo:
+  logging:
+    level:
+      org.springframework.amqp: DEBUG
+      org.springframework.rabbit: DEBUG
+
+
+catalogo:
     service:
-      url: http://localhost:8082  # URL del micro de catálogo
+      url: http://localhost:8081  # URL del micro de catálogo
 
 
-  usuario:
+usuario:
     service:
       url: http://localhost:8082

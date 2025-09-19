@@ -1,14 +1,16 @@
-package com.arka.notificacion_service.notificacion_service.service;
+package com.arka.notificacion_service.service;
 
-import com.arka.notificacion_service.notificacion_service.DTO.PostAutomationLowStock;
-import com.arka.notificacion_service.notificacion_service.model.NotificacionAbastesimiento;
-import com.arka.notificacion_service.notificacion_service.repository.NotificacionAbastesimientoRepository;
+import com.arka.notificacion_service.DTO.ProveedorDto;
+import com.arka.notificacion_service.model.NotificacionAbastesimiento;
+import com.arka.notificacion_service.repository.NotificacionAbastesimientoRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
+@Service
 public class NotificacionService {
 
     private final NotificacionAbastesimientoRepository repository;
@@ -60,18 +62,21 @@ public class NotificacionService {
         return  repository.findAll();
     }
 
-    public PostAutomationLowStock getProoveedorInfo(Integer proveedorId){
-        String url=userServiceUrl+"/api/proovedores"+proveedorId;
+    public ProveedorDto getProoveedorInfo(Integer proveedorId){
+        String url=userServiceUrl+"/api/proovedores/"+proveedorId;
 
         try{
-            ResponseEntity<String> response=restTemplate.getForEntity(url, String.class);
+            ResponseEntity<ProveedorDto> response=restTemplate.getForEntity(url, ProveedorDto.class);
             if (!response.getStatusCode().is2xxSuccessful()){
                 throw new IllegalArgumentException("id "+proveedorId+
                         "was not found");
             }
+            ProveedorDto proveedorDto =new ProveedorDto();
+            proveedorDto.setNombre(response.getBody().getNombre());
+            proveedorDto.setTelefono(response.getBody().getTelefono());
+            return proveedorDto;
         } catch (Exception e) {
             throw new RuntimeException("Error by the time of consulting id"+e.getMessage());
         }
-
     }
 }

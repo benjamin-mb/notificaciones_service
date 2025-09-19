@@ -1,4 +1,4 @@
-package com.arka.notificacion_service.notificacion_service.config;
+package com.arka.notificacion_service.config;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -30,5 +30,6 @@ public class RabbitMQConfig {
                 .to(notificactionsExchange)
                 .with(STOCK_LOW_ROUTING_KEY);
     }
+
 
 }
