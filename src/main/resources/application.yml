@@ -2,6 +2,8 @@ server:
   port: 8083
 
 spring:
+  application:
+    name: notificacion-service
   datasource:
     url: jdbc:mysql://localhost:3306/sistema_almacen?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
     username: root
@@ -17,6 +19,9 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
 
   rabbitmq:
+    listener:
+      simple:
+        acknowledge-mode: manual
     host: localhost
     port: 5672
     username: arka
@@ -28,12 +33,20 @@ spring:
       org.springframework.amqp: DEBUG
       org.springframework.rabbit: DEBUG
 
+eureka:
+  client:
+    service-url:
+      defaultZone: http://admin:admin123@localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+    registry-fetch-interval-seconds: 30
+    eureka-server-connect-timeout-seconds: 10
 
 catalogo:
     service:
-      url: http://localhost:8081  # URL del micro de catálogo
+      url: http://localhost:8082  # URL del micro de catálogo
 
 
 usuario:
     service:
-      url: http://localhost:8082
+      url: http://localhost:8081

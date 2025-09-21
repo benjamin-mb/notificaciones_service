@@ -6,6 +6,9 @@ import com.arka.notificacion_service.repository.NotificacionAbastesimientoReposi
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -41,11 +44,16 @@ public class NotificacionService {
         try{
             ResponseEntity<String>response=restTemplate.getForEntity(url, String.class);
             if (!response.getStatusCode().is2xxSuccessful()){
-                throw new IllegalArgumentException("id "+notificacionAbastesimiento.getId()+
-                        "was not found");
+                return null;
             }
-        } catch (Exception e) {
-            throw new RuntimeException("Error by the time of consulting id"+e.getMessage());
+        } catch (HttpServerErrorException se) {
+            throw se;
+        } catch (HttpClientErrorException.NotFound nf){
+            return null;
+        } catch (HttpClientErrorException ce){
+            return null;
+        } catch (RestClientException re){
+            throw re;
         }
 
         return repository.save(notificacionAbastesimiento);
