@@ -32,7 +32,7 @@ public class NotificacionService {
 
     public NotificacionAbastesimiento create(NotificacionAbastesimiento notificacionAbastesimiento){
 
-        String url= catalogServiceUrl+"/productos/id/"+notificacionAbastesimiento.getId_producto();
+        String url= catalogServiceUrl+"/api/productos/id/"+notificacionAbastesimiento.getId_producto();
 
         if (notificacionAbastesimiento.getMensaje()==null || notificacionAbastesimiento.getMensaje().isBlank()){
             throw new IllegalArgumentException("mensaje can not be blank");
