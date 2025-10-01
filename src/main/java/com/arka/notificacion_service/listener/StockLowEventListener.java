@@ -27,42 +27,43 @@ public class StockLowEventListener {
     }
 
     @RabbitListener(queues = RabbitMQConfig.STOCK_LOW_QUEUE)
-    public void handleLowStockEvent(ProductRunningLowStock event, Channel channel, Message message) throws IOException{
+    public void handleLowStockEvent(ProductRunningLowStock event, Channel channel, Message message) throws IOException {
         long deliveryTag = message.getMessageProperties().getDeliveryTag();
-       try {
-           NotificacionAbastesimiento notificacion = new NotificacionAbastesimiento();
-           notificacion.setId_producto(event.getProducto_id());
-           notificacion.setMensaje("El producto " + event.getNombre_producto()
-                   + " tiene stock bajo (" + event.getStock_Actual() + " unidades). "
-                   + "Proveedor ID: " + event.getProveedor_id());
+        try {
+            NotificacionAbastesimiento notificacion = new NotificacionAbastesimiento();
+            notificacion.setId_producto(event.getProducto_id());
+            notificacion.setMensaje("El producto " + event.getNombre_producto()
+                    + " tiene stock bajo (" + event.getStock_Actual() + " unidades). "
+                    + "Proveedor ID: " + event.getProveedor_id());
 
-           // Guardamos en BD
-           service.create(notificacion);
-           channel.basicAck(deliveryTag,false);
+            // Guardamos en BD
+            service.create(notificacion);
+            channel.basicAck(deliveryTag, false);
 
-           ProveedorDto proveedorDto=service.getProoveedorInfo(event.getProveedor_id());
+            ProveedorDto proveedorDto = service.getProoveedorInfo(event.getProveedor_id());
 
-           PostAutomationLowStock postAutomationLowStock= new PostAutomationLowStock(
-                   notificacion.getId_producto(),
-                   event.getNombre_producto(),
-                   event.getStock_Actual(),
-                   event.getProveedor_id(),
-                   proveedorDto.getTelefono(),
-                   proveedorDto.getNombre()
-           );
+            PostAutomationLowStock postAutomationLowStock = new PostAutomationLowStock(
+                    notificacion.getId_producto(),
+                    event.getNombre_producto(),
+                    event.getStock_Actual(),
+                    event.getProveedor_id(),
+                    proveedorDto.getTelefono(),
+                    proveedorDto.getNombre()
+            );
 
-           //envio al weebhok para automation
-       /* String webhookUrl="test";
-        try{
-            restTemplate.postForEntity(webhookUrl,postAutomationLowStock, Void.class);
-        }catch (Exception e){
-            throw new RuntimeException("error validating wbehook:"+e.getMessage());
-        }*/
-       } catch (IllegalArgumentException nf){
-           channel.basicReject(deliveryTag,false);
-       } catch (Exception e) {
-           channel.basicNack(deliveryTag, false, true);
-       }
+           /*//envio al weebhok para automation
+           String webhookUrl="https://trabajobenjamin.app.n8n.cloud/webhook-test/11324961-5f7b-495c-910f-3c9aa1b5ed80t";
+            try{
+                restTemplate.postForEntity(webhookUrl,postAutomationLowStock, Void.class);
+            }catch (Exception e){
+                throw new RuntimeException("error validating wbehook:"+e.getMessage());
+            }  }*/
+        } catch (IllegalArgumentException nf) {
+            channel.basicReject(deliveryTag, false);
+        } catch (Exception e) {
+            channel.basicNack(deliveryTag, false, true);
 
+
+        }
     }
 }
