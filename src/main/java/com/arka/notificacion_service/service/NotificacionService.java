@@ -46,7 +46,7 @@ public class NotificacionService {
             throw new IllegalArgumentException("ID producto no puede ser null");
         }
 
-        // ✅ Validar que el producto existe
+        // Validar que el producto existe
         validarProductoExiste(notificacionAbastesimiento.getId_producto());
 
         // ✅ Guardar en BD
@@ -72,22 +72,22 @@ public class NotificacionService {
             if (!response.getStatusCode().is2xxSuccessful()) {
                 throw new IllegalArgumentException("Producto con ID " + productoId + " no encontrado");
             }
-            log.info("✅ Producto {} validado correctamente", productoId);
+            log.info("Producto {} validado correctamente", productoId);
 
         } catch (HttpClientErrorException.NotFound nf) {
-            log.error("❌ Producto no encontrado: {}", productoId);
+            log.error("Producto no encontrado: {}", productoId);
             throw new IllegalArgumentException("Producto con ID " + productoId + " no existe");
 
         } catch (HttpClientErrorException ce) {
-            log.error("❌ Error del cliente al validar producto {}: {}", productoId, ce.getMessage());
+            log.error("Error del cliente al validar producto {}: {}", productoId, ce.getMessage());
             throw new IllegalArgumentException("Error al validar producto: " + ce.getMessage());
 
         } catch (HttpServerErrorException se) {
-            log.error("❌ Error del servidor al validar producto {}: {}", productoId, se.getMessage());
+            log.error("Error del servidor al validar producto {}: {}", productoId, se.getMessage());
             throw new RuntimeException("Error del servidor al validar producto: " + se.getMessage());
 
         } catch (RestClientException re) {
-            log.error("❌ Error de conexión al validar producto {}: {}", productoId, re.getMessage());
+            log.error("Error de conexión al validar producto {}: {}", productoId, re.getMessage());
             throw new RuntimeException("Error de conexión al validar producto: " + re.getMessage());
         }
     }

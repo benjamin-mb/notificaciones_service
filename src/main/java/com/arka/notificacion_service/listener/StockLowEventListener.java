@@ -34,7 +34,7 @@ public class StockLowEventListener {
         long deliveryTag = message.getMessageProperties().getDeliveryTag();
 
         try {
-            log.info("📨 Procesando evento de stock bajo para producto ID: {}", event.getProducto_id());
+            log.info("Procesando evento de stock bajo para producto ID: {}", event.getProducto_id());
 
             ProveedorDto proveedorDto = service.getProoveedorInfo(event.getProveedor_id());
 
@@ -46,7 +46,7 @@ public class StockLowEventListener {
                     + " (ID: " + event.getProveedor_id() + ")");
 
             NotificacionAbastesimiento notificacionGuardada = service.create(notificacion);
-            log.info("✅ Notificación guardada con ID: {}", notificacionGuardada.getId());
+            log.info("Notificación guardada con ID: {}", notificacionGuardada.getId());
 
 
             PostAutomationLowStock postAutomationLowStock = new PostAutomationLowStock(
@@ -62,33 +62,33 @@ public class StockLowEventListener {
         String webhookUrl = "https://trabajobenjamin.app.n8n.cloud/webhook-test/a39f01e8-c55b-41f6-a018-b256df004f2d";
         try {
             restTemplate.postForEntity(webhookUrl, postAutomationLowStock, Void.class);
-            log.info("✅ Webhook enviado exitosamente");
+            log.info("Webhook enviado exitosamente");
         } catch (Exception e) {
-            log.error("❌ Error enviando webhook: {}", e.getMessage());
+            log.error("Error enviando webhook: {}", e.getMessage());
             throw new RuntimeException("Error al enviar webhook", e);
         }
 
 
 
             channel.basicAck(deliveryTag, false);
-            log.info("✅ Mensaje procesado exitosamente");
+            log.info("Mensaje procesado exitosamente");
 
         } catch (IllegalArgumentException e) {
             // Errores de validación (producto/proveedor no existe)
-            log.error("❌ Error de validación: {}", e.getMessage());
+            log.error("Error de validación: {}", e.getMessage());
             channel.basicReject(deliveryTag, false); // No requeue
 
         } catch (Exception e) {
-            log.error("❌ Error inesperado: {}", e.getMessage(), e);
+            log.error("Error inesperado: {}", e.getMessage(), e);
 
             Integer retryCount = (Integer) message.getMessageProperties().getHeaders().get("x-retry-count");
             if (retryCount == null) retryCount = 0;
 
             if (retryCount < MAX_RETRIES) {
-                log.warn("⚠️ Reencolando mensaje. Intento {} de {}", retryCount + 1, MAX_RETRIES);
+                log.warn("Reencolando mensaje. Intento {} de {}", retryCount + 1, MAX_RETRIES);
                 channel.basicNack(deliveryTag, false, true);
             } else {
-                log.error("❌ Máximo de reintentos alcanzado");
+                log.error("Máximo de reintentos alcanzado");
                 channel.basicReject(deliveryTag, false);
             }
         }
