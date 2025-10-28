@@ -6,7 +6,6 @@ import com.arka.notificacion_service.repository.NotificacionAbastesimientoReposi
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +37,6 @@ public class NotificacionService {
     @Transactional
     public NotificacionAbastesimiento create(NotificacionAbastesimiento notificacionAbastesimiento){
 
-        // Validaciones básicas
         if (notificacionAbastesimiento.getMensaje() == null || notificacionAbastesimiento.getMensaje().isBlank()){
             throw new IllegalArgumentException("Mensaje no puede estar vacío");
         }
@@ -46,18 +44,16 @@ public class NotificacionService {
             throw new IllegalArgumentException("ID producto no puede ser null");
         }
 
-        // Validar que el producto existe
         validarProductoExiste(notificacionAbastesimiento.getId_producto());
 
-        // ✅ Guardar en BD
         NotificacionAbastesimiento saved = repository.save(notificacionAbastesimiento);
-        log.info("✅ Notificación guardada con ID: {} para producto: {}",
+        log.info("Notificación guardada con ID: {} para producto: {}",
                 saved.getId(), saved.getId_producto());
 
         return saved;
     }
 
-    // ✅ Método separado para validar producto
+
     private void validarProductoExiste(Integer productoId) {
         List<ServiceInstance> instances = discoveryClient.getInstances("CATALOGO-SERVICE");
         if (instances.isEmpty()) {

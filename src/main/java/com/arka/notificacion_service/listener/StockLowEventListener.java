@@ -9,6 +9,7 @@ import com.arka.notificacion_service.service.NotificacionService;
 import com.rabbitmq.client.Channel;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
@@ -21,10 +22,12 @@ public class StockLowEventListener {
     private static final Logger log = LoggerFactory.getLogger(StockLowEventListener.class);
     private static final int MAX_RETRIES = 3;
 
+    private final String webhookUrl;
     private final NotificacionService service;
     private final RestTemplate restTemplate;
 
-    public StockLowEventListener(NotificacionService service, RestTemplate restTemplate) {
+    public StockLowEventListener(@Value("${notificacion.webhook.url}") String urlWebhook, NotificacionService service, RestTemplate restTemplate) {
+        this.urlWebhook = urlWebhook;
         this.service = service;
         this.restTemplate = restTemplate;
     }
@@ -59,13 +62,13 @@ public class StockLowEventListener {
             );
 
 
-        String webhookUrl = "https://trabajobenjamin.app.n8n.cloud/webhook-test/a39f01e8-c55b-41f6-a018-b256df004f2d";
-        try {
-            restTemplate.postForEntity(webhookUrl, postAutomationLowStock, Void.class);
-            log.info("Webhook enviado exitosamente");
-        } catch (Exception e) {
-            log.error("Error enviando webhook: {}", e.getMessage());
-            throw new RuntimeException("Error al enviar webhook", e);
+
+            try {
+                restTemplate.postForEntity(webhookUrl, postAutomationLowStock, Void.class);
+                log.info("Webhook enviado exitosamente");
+            } catch (Exception e) {
+                log.error("Error enviando webhook: ", e.getMessage());
+                throw new RuntimeException("Error al enviar webhook", e);
         }
 
 
@@ -74,9 +77,9 @@ public class StockLowEventListener {
             log.info("Mensaje procesado exitosamente");
 
         } catch (IllegalArgumentException e) {
-            // Errores de validación (producto/proveedor no existe)
-            log.error("Error de validación: {}", e.getMessage());
-            channel.basicReject(deliveryTag, false); // No requeue
+
+            log.error("Error de validación: ", e.getMessage());
+            channel.basicReject(deliveryTag, false);
 
         } catch (Exception e) {
             log.error("Error inesperado: {}", e.getMessage(), e);
