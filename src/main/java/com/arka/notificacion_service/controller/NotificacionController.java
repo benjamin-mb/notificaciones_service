@@ -27,10 +27,4 @@ public class NotificacionController {
         return ResponseEntity.ok(service.findAll());
     }
 
-
-    @GetMapping("/{id}")
-    public ResponseEntity<NotificacionAbastesimiento> getById(@PathVariable Integer id) {
-        return ResponseEntity.ok(service.findById(id));
-    }
-
 }

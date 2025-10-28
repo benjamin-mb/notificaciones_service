@@ -9,9 +9,10 @@ import com.arka.notificacion_service.service.NotificacionService;
 import com.rabbitmq.client.Channel;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,14 +23,14 @@ public class StockLowEventListener {
     private static final Logger log = LoggerFactory.getLogger(StockLowEventListener.class);
     private static final int MAX_RETRIES = 3;
 
-    private final String webhookUrl;
+    private final String urlWebhook;
     private final NotificacionService service;
-    private final RestTemplate restTemplate;
+    private final RestClient restClient;
 
-    public StockLowEventListener(@Value("${notificacion.webhook.url}") String urlWebhook, NotificacionService service, RestTemplate restTemplate) {
+    public StockLowEventListener(@Value("${notificacion.webhook.url}") String urlWebhook, NotificacionService service, @Qualifier("externalRestClientBuilder")RestClient.Builder restClient) {
         this.urlWebhook = urlWebhook;
         this.service = service;
-        this.restTemplate = restTemplate;
+        this.restClient = restClient.build();
     }
 
     @RabbitListener(queues = RabbitMQConfig.STOCK_LOW_QUEUE)
@@ -64,7 +65,11 @@ public class StockLowEventListener {
 
 
             try {
-                restTemplate.postForEntity(webhookUrl, postAutomationLowStock, Void.class);
+                restClient.post()
+                        .uri(urlWebhook)
+                        .body(postAutomationLowStock)
+                        .retrieve()
+                        .toBodilessEntity();
                 log.info("Webhook enviado exitosamente");
             } catch (Exception e) {
                 log.error("Error enviando webhook: ", e.getMessage());
