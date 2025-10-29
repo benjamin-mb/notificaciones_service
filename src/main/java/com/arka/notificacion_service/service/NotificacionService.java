@@ -61,7 +61,7 @@ public class NotificacionService {
     private void validarProductoExiste(Integer productoId) {
         try{
             catalogRestClient.get()
-                    .uri("CATALOG-SERVICE")
+                    .uri("/api/productos/id/{id}", productoId)
                     .retrieve()
                     .body(String.class);
         } catch (Exception e) {
@@ -80,8 +80,8 @@ public class NotificacionService {
 
         try{
            return usuarioRestClient.get()
-                    .uri("http://USUARIO-SERVICE")
-                    .retrieve()
+                    .uri("/api/proveedores/{id}", proveedorId)
+                   .retrieve()
                     .body(ProveedorDto.class);
         } catch (Exception e) {
             throw new ProveedorNotFound("Error by the time of consulting id"+e.getMessage());
