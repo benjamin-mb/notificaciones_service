@@ -1,52 +1,13 @@
 server:
   port: 8083
-
 spring:
   application:
     name: notificacion-service
-  datasource:
-    url: jdbc:mysql://localhost:3306/sistema_almacen?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-    username: root
-    password: Developer123.
-    driver-class-name: com.mysql.cj.jdbc.Driver
-
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    show-sql: true
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect
-
-  rabbitmq:
-    listener:
-      simple:
-        acknowledge-mode: manual
-    host: localhost
-    port: 5672
-    username: arka
-    password: arka123
-    virtual-host: /
-
-  logging:
-    level:
-      org.springframework.amqp: DEBUG
-      org.springframework.rabbit: DEBUG
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://admin:admin123@localhost:8761/eureka/
-    register-with-eureka: true
-    fetch-registry: true
-    registry-fetch-interval-seconds: 30
-    eureka-server-connect-timeout-seconds: 10
-
-catalogo:
-    service:
-      url: http://localhost:8082  # URL del micro de catálogo
+  config:
+    import: optional:configserver:http://localhost:8888
+  profiles:
+    active: dev
 
 
-usuario:
-    service:
-      url: http://localhost:8081
+
+

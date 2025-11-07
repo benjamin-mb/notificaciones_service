@@ -13,7 +13,7 @@ public class PostAutomationLowStock {
     private String nombre_producto;
     private Integer stock_Actual;
     private Integer proveedor_id;
-    private String proovedor_email;
+    private String proovedor_telefono;
     private String nombre_proveedor;
 }
 

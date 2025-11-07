@@ -1,6 +1,7 @@
 package com.arka.notificacion_service.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -8,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "notificacion_abastecimiento")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class NotificacionAbastesimiento {
 
     @Id

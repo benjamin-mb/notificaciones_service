@@ -1,0 +1,33 @@
+spring:
+  config:
+    import: optional:configserver:http://arka-load-balancer-1687287239.us-east-2.elb.amazonaws.com:8888
+
+  cloud:
+    config:
+      fail-fast: false
+      retry:
+        max-attempts: 6
+
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+    port: 5672
+    username: arka
+    password: arka123
+
+notificacion:
+  webhook:
+    url: ${WEBHOOK_URL}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
+
+logging:
+  level:
+    root: WARN
+    com.arka: INFO
