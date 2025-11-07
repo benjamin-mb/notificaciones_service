@@ -22,16 +22,12 @@ public class NotificacionService {
     private static final Logger log = LoggerFactory.getLogger(NotificacionService.class);
 
     private final NotificacionAbastesimientoRepository repository;
-    private final RestClient catalogRestClient;
     private final RestClient usuarioRestClient;
 
     public NotificacionService(
             NotificacionAbastesimientoRepository repository,
             RestClient.Builder restClientBuilder) {
         this.repository = repository;
-        this.catalogRestClient = restClientBuilder
-                .baseUrl("http://CATALOG-SERVICE")
-                .build();
         this.usuarioRestClient = restClientBuilder
                 .baseUrl("http://USUARIO-SERVICE")
                 .build();
@@ -48,8 +44,6 @@ public class NotificacionService {
             throw new IllegalArgumentException("ID producto no puede ser null");
         }
 
-        validarProductoExiste(notificacionAbastesimiento.getId_producto());
-
         NotificacionAbastesimiento saved = repository.save(notificacionAbastesimiento);
         log.info("Notificación guardada con ID: {} para producto: {}",
                 saved.getId(), saved.getId_producto());
@@ -57,27 +51,11 @@ public class NotificacionService {
         return saved;
     }
 
-
-    private void validarProductoExiste(Integer productoId) {
-        try{
-            catalogRestClient.get()
-                    .uri("/api/productos/id/{id}", productoId)
-                    .retrieve()
-                    .body(String.class);
-        } catch (Exception e) {
-            throw new ProductNotFound("ProductNotFound");
-        }
-    }
-
-
     public List<NotificacionAbastesimiento> findAll(){
         return  repository.findAll();
     }
 
     public ProveedorDto getProoveedorInfo(Integer proveedorId){
-
-
-
         try{
            return usuarioRestClient.get()
                     .uri("/api/proveedores/{id}", proveedorId)
